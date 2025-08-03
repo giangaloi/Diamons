@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sự Kiện Rút Số Mỗi Ngày</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #ecf0f3, #f9fafb);
+      color: #111827;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #4f46e5;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .number-box {
+      background: white;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 30px;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+    }
+
+    .number-display {
+      font-size: 48px;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
+
+    button {
+      background: linear-gradient(to right, #6366f1, #8b5cf6);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 24px;
+    }
+
+    button:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+    }
+
+    .history {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 320px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .history h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 12px;
+    }
+
+    .history ul {
+      list-style: none;
+      max-height: 200px;
+      overflow-y: auto;
+      padding-left: 0;
+    }
+
+    .history li {
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      color: #1f2937;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Sự Kiện Rút Số Mỗi Ngày 🎁</h1>
+
+  <div class="number-box">
+    <div class="number-display" id="resultNumber">---</div>
+  </div>
+
+  <button id="drawBtn" onclick="drawNumber()">Rút Số Ngẫu Nhiên</button>
+
+  <div class="history">
+    <h2>Lịch sử rút số</h2>
+    <ul id="historyList"></ul>
+  </div>
+
+  <script>
+    const resultDisplay = document.getElementById('resultNumber');
+    const historyList = document.getElementById('historyList');
+    const drawBtn = document.getElementById('drawBtn');
+
+    const todayKey = new Date().toISOString().split('T')[0]; // "yyyy-mm-dd"
+
+    function hasDrawnToday() {
+      return localStorage.getItem("lastDrawDate") === todayKey;
+    }
+
+    function saveDrawToday(number) {
+      localStorage.setItem("lastDrawDate", todayKey);
+      localStorage.setItem("todayNumber", number);
+    }
+
+    function getTodayNumber() {
+      return localStorage.getItem("todayNumber");
+    }
+
+    function drawNumber() {
+      if (hasDrawnToday()) {
+        alert("Bạn đã rút số hôm nay rồi! Quay lại vào ngày mai nhé.");
+        return;
+      }
+
+      const randomNum = Math.floor(Math.random() * 9000) + 1000;
+      resultDisplay.textContent = randomNum;
+      saveDrawToday(randomNum);
+
+      const li = document.createElement('li');
+      li.textContent = `📅 ${todayKey} — 🎯 Số: ${randomNum}`;
+      historyList.prepend(li);
+
+      drawBtn.disabled = true;
+    }
+
+    // Khi tải trang, kiểm tra đã rút hôm nay chưa
+    window.onload = function () {
+      if (hasDrawnToday()) {
+        const num = getTodayNumber();
+        resultDisplay.textContent = num;
+        drawBtn.disabled = true;
+
+        const li = document.createElement('li');
+        li.textContent = `📅 ${todayKey} — 🎯 Số: ${num}`;
+        historyList.prepend(li);
+      }
+    };
+  </script>
+
+</body>
+</html>
