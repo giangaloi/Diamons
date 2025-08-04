@@ -1,2 +1,1 @@
-# Diamons
-Diamons
+index.html
