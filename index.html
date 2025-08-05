@@ -1,164 +1,378 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sự Kiện Rút Số Mỗi Ngày</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎲 Nhận Số Ngẫu Nhiên</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #ecf0f3, #f9fafb);
-      color: #111827;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px 20px;
-      min-height: 100vh;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe, #a8edea, #fed6e3);
+      background-size: 600% 600%;
+      animation: gradientShift 20s ease infinite;
+      position: relative;
+      overflow-x: hidden;
     }
-
-    h1 {
-      font-size: 26px;
-      font-weight: 700;
-      color: #4f46e5;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
-    .number-box {
-      background: white;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-      border-radius: 16px;
-      padding: 40px;
-      margin-bottom: 30px;
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      max-width: 320px;
-      text-align: center;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.4) 0%, transparent 60%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.4) 0%, transparent 60%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 60%),
+        radial-gradient(circle at 60% 80%, rgba(168, 237, 234, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 90% 60%, rgba(254, 214, 227, 0.3) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
     }
-
-    .number-display {
-      font-size: 48px;
-      font-weight: bold;
-      color: #1e3a8a;
-    }
-
-    button {
-      background: linear-gradient(to right, #6366f1, #8b5cf6);
-      color: white;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      max-width: 320px;
-      margin-bottom: 24px;
+      height: 100%;
+      background: 
+        linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%),
+        linear-gradient(-45deg, transparent 30%, rgba(255,255,255,0.03) 50%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+      animation: shimmer 8s ease-in-out infinite;
     }
-
-    button:disabled {
-      background: #d1d5db;
-      cursor: not-allowed;
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 100% 25%; }
+      50% { background-position: 100% 100%; }
+      75% { background-position: 0% 75%; }
+      100% { background-position: 0% 50%; }
     }
-
-    .history {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
+    
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+    
+    .glass { 
+      background: rgba(255,255,255,0.15); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    
+    .number { 
+      font-size: 3rem; 
+      font-weight: bold; 
+      background: linear-gradient(135deg, #ffd700, #ffed4e, #ff6b6b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+    }
+    
+    .floating-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      max-width: 320px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
     }
-
-    .history h2 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 12px;
+    
+    .shape {
+      position: absolute;
+      opacity: 0.1;
+      animation: float 20s infinite linear;
     }
-
-    .history ul {
-      list-style: none;
-      max-height: 200px;
-      overflow-y: auto;
-      padding-left: 0;
+    
+    .shape:nth-child(1) {
+      top: 20%;
+      left: 10%;
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(45deg, #ff6b6b, #feca57);
+      border-radius: 50%;
+      animation-delay: 0s;
     }
-
-    .history li {
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-      font-size: 14px;
-      color: #1f2937;
+    
+    .shape:nth-child(2) {
+      top: 60%;
+      left: 80%;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(45deg, #48cae4, #023e8a);
+      border-radius: 30%;
+      animation-delay: -5s;
+    }
+    
+    .shape:nth-child(3) {
+      top: 80%;
+      left: 20%;
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(45deg, #f093fb, #f5576c);
+      border-radius: 20%;
+      animation-delay: -10s;
+    }
+    
+    .shape:nth-child(4) {
+      top: 30%;
+      left: 70%;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(45deg, #4facfe, #00f2fe);
+      border-radius: 50%;
+      animation-delay: -15s;
+    }
+    
+    .shape:nth-child(5) {
+      top: 10%;
+      left: 50%;
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(45deg, #a8edea, #fed6e3);
+      border-radius: 40%;
+      animation-delay: -8s;
+    }
+    
+    .shape:nth-child(6) {
+      top: 70%;
+      left: 60%;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(45deg, #ffecd2, #fcb69f);
+      border-radius: 25%;
+      animation-delay: -12s;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-30px) rotate(120deg); }
+      66% { transform: translateY(30px) rotate(240deg); }
+      100% { transform: translateY(0px) rotate(360deg); }
     }
   </style>
 </head>
-<body>
-
-  <h1>Sự Kiện Rút Số Mỗi Ngày 🎁</h1>
-
-  <div class="number-box">
-    <div class="number-display" id="resultNumber">---</div>
+<body class="min-h-screen flex items-center justify-center">
+  <!-- Floating Background Shapes -->
+  <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
   </div>
 
-  <button id="drawBtn" onclick="drawNumber()">Rút Số Ngẫu Nhiên</button>
+  <!-- Admin Button (Hidden) -->
+  <div class="fixed top-4 right-4 opacity-0 pointer-events-none">
+    <button onclick="showAdmin()" class="glass text-white p-3 rounded-full hover:bg-white/20">🔐</button>
+  </div>
 
-  <div class="history">
-    <h2>Lịch sử rút số</h2>
-    <ul id="historyList"></ul>
+  <div class="glass p-8 rounded-2xl text-center w-full max-w-md">
+    <h1 class="text-white text-3xl mb-4" onclick="secretAccess()" style="cursor: pointer;">🎲 Nhận Số Ngẫu Nhiên</h1>
+    <input id="gameId" type="text" placeholder="Nhập ID GAME..." class="w-full p-3 rounded bg-white/20 text-white mb-4" />
+    <button onclick="playGame()" class="w-full bg-pink-500 text-white p-3 rounded mb-4">Nhận Số</button>
+    <div id="result" class="hidden">
+      <div class="number" id="numberDisplay"></div>
+      <div class="text-white text-sm mt-2" id="playerInfo"></div>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center">
+    <div class="glass p-8 rounded-3xl w-full max-w-3xl mx-4 max-h-[85vh] overflow-y-auto shadow-2xl">
+      <div class="flex justify-between items-center mb-8">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-2xl">
+            🔐
+          </div>
+          <div>
+            <h2 class="text-white text-2xl font-bold">Admin Panel</h2>
+            <p class="text-white/70 text-sm">Quản lý hệ thống game</p>
+          </div>
+        </div>
+        <button onclick="hideAdmin()" class="text-white/70 hover:text-white text-3xl transition-colors">✕</button>
+      </div>
+      
+      <div id="loginForm" class="mb-8">
+        <div class="bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-2xl p-6 border border-white/20">
+          <h3 class="text-white text-lg font-semibold mb-4 text-center">🔑 Đăng Nhập Hệ Thống</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="text-white/80 text-sm block mb-2">Tài khoản</label>
+              <input id="adminUser" type="text" placeholder="Nhập tài khoản admin..." 
+                     class="w-full p-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all" />
+            </div>
+            <div>
+              <label class="text-white/80 text-sm block mb-2">Mật khẩu</label>
+              <input id="adminPass" type="password" placeholder="Nhập mật khẩu..." 
+                     class="w-full p-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all" />
+            </div>
+            <button onclick="login()" 
+                    class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white p-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-lg">
+              🚀 Đăng Nhập
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminContent" class="hidden">
+        <div class="mb-6">
+          <div class="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-2xl p-4 border border-white/20">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-sm">🔍</div>
+              <h3 class="text-white font-semibold">Tìm Kiếm Dữ Liệu</h3>
+            </div>
+            <input id="search" type="text" placeholder="Tìm kiếm theo ID hoặc số..." 
+                   class="w-full p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all" />
+          </div>
+        </div>
+        
+        <div class="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl p-6 border border-white/20">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-sm">📊</div>
+            <h3 class="text-white font-semibold text-lg">Lịch Sử Chơi Game</h3>
+          </div>
+          <div class="bg-white/5 rounded-xl overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-white">
+                <thead>
+                  <tr class="bg-white/10">
+                    <th class="text-left p-4 font-semibold">👤 ID Player</th>
+                    <th class="text-left p-4 font-semibold">🎲 Số May Mắn</th>
+                    <th class="text-left p-4 font-semibold">⏰ Thời Gian</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    const resultDisplay = document.getElementById('resultNumber');
-    const historyList = document.getElementById('historyList');
-    const drawBtn = document.getElementById('drawBtn');
-
-    const todayKey = new Date().toISOString().split('T')[0]; // "yyyy-mm-dd"
-
-    function hasDrawnToday() {
-      return localStorage.getItem("lastDrawDate") === todayKey;
+    let dailyPlays = JSON.parse(localStorage.getItem('dailyPlays') || '{}');
+    let gameHistory = JSON.parse(localStorage.getItem('gameHistory') || '[]');
+    
+    function canPlay(id) {
+      const today = new Date().toISOString().split('T')[0];
+      return dailyPlays[id] !== today;
+    }
+    
+    function markPlayed(id) {
+      const today = new Date().toISOString().split('T')[0];
+      dailyPlays[id] = today;
+      localStorage.setItem('dailyPlays', JSON.stringify(dailyPlays));
+    }
+    
+    function addHistory(id, number) {
+      const entry = {
+        id: id,
+        number: number,
+        time: new Date().toLocaleString('vi-VN')
+      };
+      gameHistory.unshift(entry);
+      localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
+    }
+    
+    function playGame() {
+      const id = document.getElementById('gameId').value.trim();
+      if (!id) return alert('Vui lòng nhập ID');
+      if (!canPlay(id)) return alert('⚠️ Bạn đã chơi hôm nay rồi! Hãy quay lại vào ngày mai. 😊');
+      
+      const num = Math.floor(Math.random()*10000).toString().padStart(4,'0');
+      document.getElementById('numberDisplay').textContent = num;
+      document.getElementById('playerInfo').textContent = 'ID: ' + id;
+      document.getElementById('result').classList.remove('hidden');
+      
+      markPlayed(id);
+      addHistory(id, num);
     }
 
-    function saveDrawToday(number) {
-      localStorage.setItem("lastDrawDate", todayKey);
-      localStorage.setItem("todayNumber", number);
-    }
-
-    function getTodayNumber() {
-      return localStorage.getItem("todayNumber");
-    }
-
-    function drawNumber() {
-      if (hasDrawnToday()) {
-        alert("Bạn đã rút số hôm nay rồi! Quay lại vào ngày mai nhé.");
-        return;
+    let clickCount = 0;
+    function secretAccess() {
+      clickCount++;
+      if (clickCount >= 5) {
+        showAdmin();
+        clickCount = 0;
       }
-
-      const randomNum = Math.floor(Math.random() * 9000) + 1000;
-      resultDisplay.textContent = randomNum;
-      saveDrawToday(randomNum);
-
-      const li = document.createElement('li');
-      li.textContent = `📅 ${todayKey} — 🎯 Số: ${randomNum}`;
-      historyList.prepend(li);
-
-      drawBtn.disabled = true;
     }
 
-    // Khi tải trang, kiểm tra đã rút hôm nay chưa
-    window.onload = function () {
-      if (hasDrawnToday()) {
-        const num = getTodayNumber();
-        resultDisplay.textContent = num;
-        drawBtn.disabled = true;
+    function showAdmin() {
+      document.getElementById('adminPanel').classList.remove('hidden');
+    }
 
-        const li = document.createElement('li');
-        li.textContent = `📅 ${todayKey} — 🎯 Số: ${num}`;
-        historyList.prepend(li);
+    function hideAdmin() {
+      document.getElementById('adminPanel').classList.add('hidden');
+      document.getElementById('adminContent').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('adminUser').value = '';
+      document.getElementById('adminPass').value = '';
+    }
+
+    function login() {
+      const user = document.getElementById('adminUser').value;
+      const pass = document.getElementById('adminPass').value;
+      
+      if (user === '9999' && pass === '999') {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('adminContent').classList.remove('hidden');
+        loadHistory();
+        alert('🎉 Đăng nhập admin thành công!');
+      } else {
+        alert('❌ Sai tài khoản hoặc mật khẩu!');
       }
-    };
+    }
+
+    function loadHistory() {
+      const tbody = document.getElementById('historyTable');
+      const searchTerm = document.getElementById('search').value.toLowerCase();
+      
+      const filtered = gameHistory.filter(entry => 
+        entry.id.toLowerCase().includes(searchTerm) || 
+        entry.number.includes(searchTerm)
+      );
+      
+      tbody.innerHTML = filtered.map((entry, index) => `
+        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+          <td class="p-4">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs font-bold">${index + 1}</div>
+              <span class="font-medium">${entry.id}</span>
+            </div>
+          </td>
+          <td class="p-4">
+            <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-3 py-1 rounded-full font-bold text-lg">${entry.number}</span>
+          </td>
+          <td class="p-4 text-white/80">${entry.time}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Search functionality
+    document.getElementById('search').addEventListener('input', loadHistory);
+
+    // Enter key support
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const active = document.activeElement;
+        if (active.id === 'gameId') playGame();
+        if (active.id === 'adminPass') login();
+      }
+    });
   </script>
-
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a5a7bbc1b1cb79',t:'MTc1NDM5MDIwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
