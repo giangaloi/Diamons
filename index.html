@@ -2,163 +2,233 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sự Kiện Rút Số Mỗi Ngày</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mini Game Nhận Số</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #ecf0f3, #f9fafb);
-      color: #111827;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px 20px;
-      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #e0eaff, #f3f0ff);
+      margin: 0;
+      padding: 20px;
     }
 
-    h1 {
-      font-size: 26px;
-      font-weight: 700;
-      color: #4f46e5;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
-    .number-box {
+    .game-box, .admin-panel, .login-box {
       background: white;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      padding: 30px;
       border-radius: 16px;
-      padding: 40px;
-      margin-bottom: 30px;
-      width: 100%;
-      max-width: 320px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
       text-align: center;
+      width: 100%;
+      max-width: 400px;
+      margin: 30px auto;
     }
 
-    .number-display {
-      font-size: 48px;
-      font-weight: bold;
-      color: #1e3a8a;
+    h2 {
+      margin-bottom: 20px;
+      background: linear-gradient(to right, #7f6aff, #a06af9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    input {
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
     }
 
     button {
-      background: linear-gradient(to right, #6366f1, #8b5cf6);
+      background: linear-gradient(to right, #7f6aff, #a06af9);
       color: white;
+      padding: 12px;
       border: none;
-      padding: 14px 28px;
-      border-radius: 12px;
+      border-radius: 10px;
       font-size: 16px;
-      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
       width: 100%;
-      max-width: 320px;
-      margin-bottom: 24px;
+      margin-top: 10px;
     }
 
-    button:disabled {
-      background: #d1d5db;
-      cursor: not-allowed;
+    .result {
+      margin-top: 24px;
     }
 
-    .history {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
+    .number {
+      font-size: 36px;
+      font-weight: bold;
+      letter-spacing: 8px;
+      color: #7f6aff;
+    }
+
+    .id-display {
+      margin-top: 10px;
+      color: #555;
+    }
+
+    .admin-panel {
+      display: none;
+      max-width: 600px;
+      text-align: left;
+    }
+
+    .login-box {
+      display: none;
+    }
+
+    table {
       width: 100%;
-      max-width: 320px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-collapse: collapse;
+      margin-top: 16px;
     }
 
-    .history h2 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 12px;
-    }
-
-    .history ul {
-      list-style: none;
-      max-height: 200px;
-      overflow-y: auto;
-      padding-left: 0;
-    }
-
-    .history li {
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
       font-size: 14px;
-      color: #1f2937;
+      text-align: center;
+    }
+
+    .search-box {
+      margin: 16px 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-box input {
+      flex: 1;
+    }
+
+    /* Nút ổ khóa */
+    .admin-toggle {
+      position: fixed;
+      top: 12px;
+      right: 16px;
+      font-size: 22px;
+      cursor: pointer;
+      z-index: 999;
+      color: #555;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    .admin-toggle:hover {
+      opacity: 1;
     }
   </style>
 </head>
 <body>
 
-  <h1>Sự Kiện Rút Số Mỗi Ngày 🎁</h1>
+  <!-- Biểu tượng ổ khóa góc phải -->
+  <div class="admin-toggle" onclick="document.querySelector('.login-box').style.display='block'">🔐</div>
 
-  <div class="number-box">
-    <div class="number-display" id="resultNumber">---</div>
+  <!-- Game Box -->
+  <div class="game-box">
+    <h2>🎮 Mini Game: Nhận 4 Số</h2>
+    <input type="text" id="gameId" placeholder="Nhập ID GAME của bạn">
+    <button onclick="playGame()">Nhận Số Ngẫu Nhiên</button>
+    <div class="result" id="resultBox" style="display:none;">
+      <div class="number" id="randomNumber"></div>
+      <div class="id-display" id="idShow"></div>
+    </div>
   </div>
 
-  <button id="drawBtn" onclick="drawNumber()">Rút Số Ngẫu Nhiên</button>
+  <!-- Login Box -->
+  <div class="login-box">
+    <div class="game-box">
+      <input type="text" id="adminUser" placeholder="Tài khoản">
+      <input type="password" id="adminPass" placeholder="Mật khẩu">
+      <button onclick="loginAdmin()">Đăng nhập</button>
+    </div>
+  </div>
 
-  <div class="history">
-    <h2>Lịch sử rút số</h2>
-    <ul id="historyList"></ul>
+  <!-- Admin Panel -->
+  <div class="admin-panel" id="adminPanel">
+    <h2>📊 Panel Quản Lý</h2>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Tìm theo ID hoặc số...">
+      <button onclick="searchHistory()">Tìm</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>ID Game</th><th>Số Quay</th></tr>
+      </thead>
+      <tbody id="historyTable">
+        <!-- dữ liệu sẽ thêm ở đây -->
+      </tbody>
+    </table>
   </div>
 
   <script>
-    const resultDisplay = document.getElementById('resultNumber');
-    const historyList = document.getElementById('historyList');
-    const drawBtn = document.getElementById('drawBtn');
+    const historyData = [];
 
-    const todayKey = new Date().toISOString().split('T')[0]; // "yyyy-mm-dd"
-
-    function hasDrawnToday() {
-      return localStorage.getItem("lastDrawDate") === todayKey;
-    }
-
-    function saveDrawToday(number) {
-      localStorage.setItem("lastDrawDate", todayKey);
-      localStorage.setItem("todayNumber", number);
-    }
-
-    function getTodayNumber() {
-      return localStorage.getItem("todayNumber");
-    }
-
-    function drawNumber() {
-      if (hasDrawnToday()) {
-        alert("Bạn đã rút số hôm nay rồi! Quay lại vào ngày mai nhé.");
+    function playGame() {
+      const id = document.getElementById('gameId').value.trim();
+      if (!id) {
+        alert("Vui lòng nhập ID GAME!");
         return;
       }
 
-      const randomNum = Math.floor(Math.random() * 9000) + 1000;
-      resultDisplay.textContent = randomNum;
-      saveDrawToday(randomNum);
+      // Kiểm tra LocalStorage theo ngày
+      const today = new Date().toISOString().split('T')[0]; // yyyy-mm-dd
+      const stored = JSON.parse(localStorage.getItem("dailyCheckins") || "{}");
 
-      const li = document.createElement('li');
-      li.textContent = `📅 ${todayKey} — 🎯 Số: ${randomNum}`;
-      historyList.prepend(li);
+      if (stored[id] === today) {
+        alert("⛔ Bạn đã nhận hôm nay rồi, hãy quay lại vào ngày mai!");
+        return;
+      }
 
-      drawBtn.disabled = true;
+      // Tạo số ngẫu nhiên
+      const num = Math.floor(Math.random() * 10000);
+      const padded = num.toString().padStart(4, '0');
+
+      // Hiển thị kết quả
+      document.getElementById('randomNumber').textContent = padded;
+      document.getElementById('idShow').textContent = "ID GAME: " + id;
+      document.getElementById('resultBox').style.display = 'block';
+
+      // Cập nhật lịch sử
+      historyData.push({ id, number: padded });
+      updateHistoryTable(historyData);
+
+      // Lưu vào LocalStorage
+      stored[id] = today;
+      localStorage.setItem("dailyCheckins", JSON.stringify(stored));
     }
 
-    // Khi tải trang, kiểm tra đã rút hôm nay chưa
-    window.onload = function () {
-      if (hasDrawnToday()) {
-        const num = getTodayNumber();
-        resultDisplay.textContent = num;
-        drawBtn.disabled = true;
+    function updateHistoryTable(data) {
+      const tbody = document.getElementById('historyTable');
+      if (!tbody) return;
+      tbody.innerHTML = "";
+      data.forEach(item => {
+        const row = `<tr><td>${item.id}</td><td>${item.number}</td></tr>`;
+        tbody.innerHTML += row;
+      });
+    }
 
-        const li = document.createElement('li');
-        li.textContent = `📅 ${todayKey} — 🎯 Số: ${num}`;
-        historyList.prepend(li);
+    function loginAdmin() {
+      const user = document.getElementById('adminUser').value;
+      const pass = document.getElementById('adminPass').value;
+
+      if (user === '9999' && pass === '999') {
+        document.getElementById('adminPanel').style.display = 'block';
+        document.querySelector('.login-box').style.display = 'none';
+        alert("Đăng nhập thành công!");
+      } else {
+        alert("Sai tài khoản hoặc mật khẩu!");
       }
-    };
-  </script>
+    }
 
+    function searchHistory() {
+      const keyword = document.getElementById('searchInput').value.trim();
+      const filtered = historyData.filter(
+        item => item.id.includes(keyword) || item.number.includes(keyword)
+      );
+      updateHistoryTable(filtered);
+    }
+  </script>
 </body>
 </html>
